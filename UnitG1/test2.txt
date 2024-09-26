@@ -1,0 +1,3 @@
+#DAN: Grading of git assignment
+#Looks pretty good, except I don't see you using gitrm. Might be worth reviewing. 
+#You get an S.
