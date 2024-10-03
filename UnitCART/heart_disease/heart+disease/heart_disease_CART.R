@@ -13,7 +13,7 @@
 #3.3 Pruned CART
 #3.4 Bagging model
 #3.5 Random forest model
-#4 Best model with 25% data
+#4 RESULTS Best model with 25% data
 
 #1. ----LIBRARIES
 rm(list=ls())
@@ -25,7 +25,7 @@ library(adabag)
 library(xgboost)
 
 #2. ----DATA
-setwd("C:/Users/asque/Documents/ML/QuezadaMLbiol/UnitCART/own_data/heart+disease")
+setwd("C:/Users/asque/Documents/ML/QuezadaMLbiol/UnitCART/heart_disease/heart+disease/")
 heart <- read.table("processed.cleveland.data", header = F, sep = ",")
 head(heart)
 names(heart)<-c("age", "sex", "cp", "trestbps", "chol", "fbs", "restecg",
@@ -230,7 +230,7 @@ tail(m_rf$err.rate) #last entry of column 1 is the same as the oob error rate ab
 
 plot(m_rf) #You can also see as the number of trees increases the accuracy increases and then
 #levels off 
-dim(m_rf$err.rate)[1] #corresponds to the number of trees=1000 trees
+dim(m_rf$err.rate)[1] #corresponds to the number of trees -->1000 trees
 
 rf_pred<-predict(m_rf)
 sum(m_rf$predicted==rf_pred)
@@ -256,7 +256,7 @@ mean(xerrs_f)#--> 0.4442688
 mean(xerrs_d)#--> 0.4357708
 mean(xerrs_5)#--> 0.3693676 *best value
 mean(xerrs_b)#--> 1
-mean(xerrs_rf)# --> 1
+mean(xerrs_rf)# --> 0.3871542
 #Comparable to bagging. Technically the best model (by a tiny bit) is the Pruned cart
 
 #**Now apply adaptive boosting
@@ -292,8 +292,8 @@ mean(xerrs_f)#--> 0.4442688
 mean(xerrs_d)#--> 0.4357708
 mean(xerrs_5)#--> 0.3693676 *best value
 mean(xerrs_b)#--> 1
-mean(xerrs_rf)# --> 1
-mean(xerrs_ada) #--> NA
+mean(xerrs_rf)# --> 0.3871542
+mean(xerrs_ada) #--> 0.3828063
 
 #**Now apply EXTREME GRADIENT BOOSTING
 
@@ -305,29 +305,28 @@ sapply(d_val, class)
 d_val[] <- lapply(d_val, function(x) {
   if (is.character(x)) as.numeric(x) else x
 })
-X_val <- as.matrix(d_val[, 2:(dim(d_val)[2])])  # Usa todas las columnas excepto 'num'
-y_val <- as.integer(d_val[, 1]) - 1              # Asegúrate de que 'num' sea el índice correcto
+X_val <- as.matrix(d_val[, 2:(dim(d_val)[2])])  
+y_val <- as.integer(d_val[, 1]) - 1             
 class(X_val)
 d_val$ca <- as.numeric(as.character(d_val$ca))
 d_val$thal <- as.numeric(as.character(d_val$thal))
-X_val <- as.matrix(d_val[, 2:(dim(d_val)[2])])  # Asegúrate de que ahora todo sea numérico
-y_val <- as.integer(d_val[, 1]) - 1              # Asegúrate de que 'num' sea el índice correcto
-sapply(X_val, class)  # Debería mostrar "numeric" para todas las columnas
-sapply(d_val, class)
+X_val <- as.matrix(d_val[, 2:(dim(d_val)[2])]) 
+y_val <- as.integer(d_val[, 1]) - 1             
+sapply(X_val, class)  
 d_val[] <- lapply(d_val, function(x) {
   if (is.factor(x)) {
-    as.numeric(as.character(x))  # Convierte factores a numéricos
+    as.numeric(as.character(x))  
   } else if (is.character(x)) {
-    as.numeric(x)  # Convierte caracteres a numéricos
+    as.numeric(x)  
   } else {
-    x  # Mantiene el tipo original si no es factor ni carácter
+    x  
   }
 })
-X_val <- as.matrix(d_val[, 2:(dim(d_val)[2])])  # Asegúrate de que ahora todo sea numérico
-y_val <- as.integer(d_val[, 1]) - 1              # Asegúrate de que 'num' sea el índice correcto
-sapply(X_val, class)  # Debería mostrar "numeric" para todas las columnas
-y_val <- ifelse(d_val$num >= 2, 1, 0)  # 1 para "enfermo", 0 para "sano"
-unique(y_val)  # Verifica los valores únicos en y_val
+X_val <- as.matrix(d_val[, 2:(dim(d_val)[2])]) 
+y_val <- as.integer(d_val[, 1]) - 1              
+sapply(X_val, class)  
+y_val <- ifelse(d_val$num >= 2, 1, 0) 
+unique(y_val)  
 
 
 m_xgb<-xgboost(data=X_val,
@@ -370,8 +369,8 @@ mean(xerrs_f)#--> 0.4442688
 mean(xerrs_d)#--> 0.4357708
 mean(xerrs_5)#--> 0.3693676 *best value
 mean(xerrs_b)#--> 1
-mean(xerrs_rf)# --> 1
-mean(xerrs_ada) #--> NA
+mean(xerrs_rf)# --> 0.3871542
+mean(xerrs_ada) #--> 0.3828063
 mean(xerrs_xgb)#--> 0
 
 importance_matrix<-xgb.importance(model=m_xgb)
@@ -381,7 +380,8 @@ importance_matrix
 #**Now apply THAT ONE MODEL ONLY on the test data and see prediction error
 #--Pruned CART
 testpred_ada<-predict(m_f_5,d_test[,1:14],type="class")#$class
-sum(testpred_ada!=d_test$num)/dim(d_test)[1] #--> 0.5526316
+sum(testpred_ada!=d_test$num)/dim(d_test)[1] #--> 0.5263158
+
 #RESULTS
 #By using this heart disease data with the predictive attribute (num) that 
 #refers to the type of chest pain (values from 1 to 4, where 1: typical angina, 
@@ -389,7 +389,7 @@ sum(testpred_ada!=d_test$num)/dim(d_test)[1] #--> 0.5526316
 #The model I obtained that best fits the data and has the lowest cross-validation 
 #error is "Pruned cart" with a value of 0.3693676. However, when presenting this 
 #model with the d_test, i.e. 25% of my original data, it presents a 
-#cross-validation error of 0.5526316. With this result, I can make two 
+#cross-validation error of 0.5263158. With this result, I can make two 
 #observations, first is that more work is needed with the variables 
 #"ca" (number of main vessels (0-3) colored by fluoroscopy) and 
 #"thal" (3 = normal; 6 = fixed defect; 7 = reversible defect), since these were 
@@ -400,4 +400,46 @@ sum(testpred_ada!=d_test$num)/dim(d_test)[1] #--> 0.5526316
 #satisfy the correct definition of a "Classification and Regression Tree".
 #Since, the both cross validation values are not similar or close enough. 
 #With these results, I can assume my models have overfitting being that 
-#"Prunned cart" do not work well for the d_test as it worked for the d_val. 
+#"Pruned cart" do not work well for the d_test as it worked for the d_val. 
+
+## Graphs (anexes)
+
+     hist(heart_filterehist(heart_filtered$num, 
+     main = "Diagnosis of heart disease", 
+     xlab = "num: diagnosis of heart disease (angiographic disease status)", 
+     ylab = "Frecuency", 
+     col = c("#F748A5","#359B73","#2271B2", "#D55E00", "#F0E442"), 
+     border = "black"))
+     count_ones <- sum(heart$num == 1)
+axis(1, at = 1:4, labels = 1:4)  
+legend("topright",           
+       legend = c( "0: Absence", "1: Typical angina", 
+                  "2: Atypical angina", 
+                  "3: Non-anginal pain", 
+                  "4: Asymptomatic"), 
+       fill = c("#F748A5","#359B73","#2271B2", "#D55E00", "#F0E442"), 
+       border = "black",        # Color del borde de la leyenda
+       bty = "n") 
+
+boxplot(age ~ num, data = heart,
+        main = "Patient's age",
+        xlab = "Angiographic disease status",
+        ylab = "Age",
+        col = c("#F748A5","#359B73","#2271B2", "#D55E00", "#F0E442"))
+
+
+library(ggplot2)
+install.packages("gridExtra")
+library(gridExtra)
+library(grid) 
+data <- data.frame(
+  Models = c("Prunned model", "Full CART", "Pruned CART", "Bagging Model",
+             "Random Forest Model", "Adaptive boosting", 
+             "Extreme Gradient Boosting"),  
+  "x-val accuracy" = c(0.4442688, 0.4357708, 0.3693676, 1, 0.3871542, 0.3828063, 0)  
+)
+tabla_grafico <- tableGrob(data)
+png("tabla.png", width = 600, height = 400)  # Ajusta el tamaño según sea necesario
+grid.draw(tabla_grafico)
+dev.off() 
+#End 
