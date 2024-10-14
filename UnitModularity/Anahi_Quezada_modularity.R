@@ -23,14 +23,19 @@ setwd("C:/Users/asque/Documents/ML/QuezadaMLbiol/UnitModularity")
 #12. Do the write up and add to github. 
 #13. Submit the assignment. 
 
+#----Workflow 
+#1. Connect to my github repositorie (check)
+#2. Packages to use
 install.packages("readRDS")
+install.packages("maps")
 library(readRDS)
 library(maps)
 library(dplyr)
 library(ggplot2)
 library(viridis)
+library(gridExtra)
 
-
+#3. Checking my data
 #MODULARITY EXAMPLE -> define the variables instead of constants 
 
 precip <- readRDS(file = "USAAnnualPcpn1950_2008.rds")
@@ -63,6 +68,8 @@ temp_clean <- na.omit(temp)
 dim(temp_clean)
 anyNA(temp_clean) #--> FALSE 
 
+#4. My data to do the calculations
+
 #At least 40 measurements 
 #Precipitation
 
@@ -79,6 +86,7 @@ temp_40 <- temp_clean %>%
   filter(n()>=values )%>%
   ungroup()
 
+#5. Slopes 
 #MODULARITY EXAMPLE ->  create the function to do the slopes and just call the 
 #name of the fucntion here. This function can work for both of my data sets(vars)
 source(file = "slopes_vars.R")
@@ -95,7 +103,9 @@ slopes_t <- temp_40 %>%
   summarize(slope = slopes_vars(cur_data()))
 print(slopes_t)
 
-#---Histogram 
+#6. Save changes and submit to github. 
+
+#7. ---Histogram 
 #MODULARITY EXAMPLE --> a function which display two options of palette of colors.
 #I can develop more this idea with more options of colors. I like this idea because
 #in my research I work with a lot of graphs and plots. 
@@ -115,33 +125,52 @@ legend("topright", legend = "Note: this histogram contains
 dev.off()
 
 pdf(file = "AQ_hist_precip.pdf")
-title<-"Histogram of precipitation slopes"
-palette <- colores("non_blind_fr")
-xlab <- "Precip slope" 
+title_1<-"Histogram of precipitation slopes"
+palette_1 <- colores("non_blind_fr")
+xlab_1 <- "Precip slope" 
 ylab <- "Frequency"
-hist(slopes_p$slope, 50, main= title, col =palette, xlab = xlab, ylab = ylab)
+hist(slopes_p$slope, 50, main= title_1, col =palette_1, xlab = xlab_1, ylab = ylab)
 legend("topright", legend = "Note: this histogram contains
        non blind friendly colors",  cex = 0.5)
 dev.off()
 
-#--MAPS
+#8. Add the new 2 pdf to github (done)
+
+#9. --MAPS
 
 #To do the map I used ggplot2
-grad <- na.omit(slopes_2)
-map_1 <- map_data("country")
-ggplot() +
-  geom_polygon(data = map_1, aes(x = long, y = lat, group = group), fill = "lightblue", color = "white") +
-  geom_point(data = slopes_2, aes(x = lon, y = lat, color = slopes_t$slope), size = 0.2) +
-  scale_color_gradient(low = "yellow", high = "blue", na.value = "red") +  
-  labs(title = "Map of Temperature Slopes", color = "Slope (Precip)") +
-  theme_minimal() +
-  coord_fixed(1.3)
-ggplot() +
+plot1 <- ggplot(slopes_t,  aes(x = lon, y = lat, color = slope)) +
+  borders("state") +  geom_point(size = 0.5) +
+  scale_color_gradientn(colors = colores("blind_fr", n=10)) +  
+  labs(title = "Map of temperature slopes", x = "Longitude", y = "Latitude", color = "slope") +
+  theme_minimal()
+
+map_1 <- map_data("state")
+plot2 <- ggplot() +
   geom_polygon(data = map_1, aes(x = long, y = lat, group = group), fill = "lightgrey", color = "white") +
-  geom_point(data = slopes_2, aes(x = lon, y = lat, color = slopes_p$slope), size = 0.2) +
-  scale_color_gradient(low = "blue", high = "red", na.value = "grey") + 
+  geom_point(data = slopes_p, aes(x = lon, y = lat, color = slope), size = 0.2) +
+  scale_color_gradientn(colors = colores("non_blind_fr", n=10)) + 
   labs(title = "Map of Precipitation Slopes", color = "Slope (Temperature)") +
   theme_minimal() +
   coord_fixed(1.3)
+
+#10. Add the new file (done)
+
+#11. Answer the question about "Climate Change"
+#MODULARITY EXAMPLE --> answer the question : Climate change?
+#To answer this question, I'm going to compare my results. 
+#In order to do this, I'm going to present my results in different windows. 
+#histograms...
+x11()
+par(mfrow = c(1, 2))
+hist(slopes_t$slope,50, main= title, col =palette, xlab = xlab, ylab = ylab )
+hist(slopes_p$slope, 50, main= title_1, col =palette_1, xlab = xlab_1, ylab = ylab)
+
+#maps ... 
+x11()
+grid.arrange(plot1, plot2, nrow = 2)
+
+#12. Do the write up and add to github. 
+#13. Submit the assignment. 
 
 
