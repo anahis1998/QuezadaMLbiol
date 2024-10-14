@@ -42,8 +42,10 @@ precip <- readRDS(file = "USAAnnualPcpn1950_2008.rds")
 temp <- readRDS(file="USAAnnualTemp1950_2008.rds")
 dim(precip)
 dim(temp)
-colnames(precip)
-colnames(temp)
+#checking the structure of my data 
+colnames(precip) #--> state, name, lon, lat, data and year
+colnames(temp)   #--> state, name, lon, lat, data and year
+#both of them, contain the same structure, then it will be easy to work. 
 
 #My dataset's content
 anyNA(precip) #--> TRUE
@@ -150,7 +152,7 @@ plot2 <- ggplot() +
   geom_polygon(data = map_1, aes(x = long, y = lat, group = group), fill = "lightgrey", color = "white") +
   geom_point(data = slopes_p, aes(x = lon, y = lat, color = slope), size = 0.2) +
   scale_color_gradientn(colors = colores("non_blind_fr", n=10)) + 
-  labs(title = "Map of Precipitation Slopes", color = "Slope (Temperature)") +
+  labs(title = "Map of Precipitation Slopes", color = "Slope (Precipitation)") +
   theme_minimal() +
   coord_fixed(1.3)
 
@@ -161,16 +163,39 @@ plot2 <- ggplot() +
 #To answer this question, I'm going to compare my results. 
 #In order to do this, I'm going to present my results in different windows. 
 #histograms...
+
 x11()
+pdf(file = "AQ_temp_precip.pdf")
 par(mfrow = c(1, 2))
 hist(slopes_t$slope,50, main= title, col =palette, xlab = xlab, ylab = ylab )
 hist(slopes_p$slope, 50, main= title_1, col =palette_1, xlab = xlab_1, ylab = ylab)
-
+dev.off()
 #maps ... 
 x11()
+pdf(file = "AQ_temp_precip_maps.pdf")
 grid.arrange(plot1, plot2, nrow = 2)
-
+dev.off()
 #12. Do the write up and add to github. 
+#Can you see a warming trend with these data? Can you see a trend toward greater 
+#or lesser precipitation over the period(1950-2008)?
+#--> Temperature
+#Speaking about the visual results coming from the maps and the histogram, I can 
+#see there are more positive slopes, this can reflect that there is a clear trend 
+#to warm values, specifically this shows the climate change has been developing 
+#in the 1950-2008 period of time. 
+#About specific examples where the data shows this warmer slopes are the states"
+#Montana, North Dakota, Minnesota and Arizona. This states as it's show in the map
+#contain some yellow points that reflect the 0.10 temperature slopes.
+
+#--> Precipitation
+#The most repeated values here are in the range (0.00-0.1) precipitation slopes.
+#To me, there is no a clear trend that can relates with climate change, but above
+#0.15 until 0.4, there is a strong decrease presence of precipitation. 
+#As is presented in the "Map of Precipitation Slopes", the states that have more 
+#than 40 measurements, are Ohio, Tenenessee, and Alabama. For this states, and considering
+#the colors I can conclude that Tennessee has more negative values of precipitation,
+#this way this state would have experienced periods of drought.And Alabama has 
+#some points in purple reflecting the abundance of precipitation. 
 #13. Submit the assignment. 
 
 
