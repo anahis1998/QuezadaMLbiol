@@ -3,7 +3,7 @@
 #This way, I can decide if I want the plot with color blind friendly colors or not
 
 
-colores <- function(type = "blind_friendly", n = 50) {
+colores <- function(type = "blind_friendly", n = 10) {
   
   if (type == "blind_fr") {
     colors <- viridis::viridis(n)
