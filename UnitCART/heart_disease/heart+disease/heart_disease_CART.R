@@ -1,8 +1,15 @@
+#Overall: You did all the parts, good effort. There are some bugs, described below,
+#which the error rate of 1 on your bagged model could have clued you to. Also, 
+#the warnings R emits could have clued you - always pay attention to warnings! 
+#Grade: S
+
 #CART ASSINGMENT 
 #Name: Anahi Quezada
 #Data: heart disease
 #Source: UC Irvine - Machine Learning Repository 
 #link: "https://archive.ics.uci.edu/dataset/45/heart+disease"
+
+#DAN: Smart move to have a good header and link to the data
 
 #Index
 #1. Libraries
@@ -26,6 +33,9 @@ library(xgboost)
 
 #2. ----DATA
 setwd("C:/Users/asque/Documents/ML/QuezadaMLbiol/UnitCART/heart_disease/heart+disease/")
+#DAN: This won't run on my machine because I have a different directory structure. I prefer
+#to just have a comment saying where to make the R working directory before running the 
+#script. Typically the same folder as the script. 
 heart <- read.table("processed.cleveland.data", header = F, sep = ",")
 head(heart)
 names(heart)<-c("age", "sex", "cp", "trestbps", "chol", "fbs", "restecg",
@@ -133,6 +143,10 @@ mean(xerrs_f) #0.4442688
 
 mean(xerrs_d) #0.4357708
 
+#DAN: The fact that you are using the same variables names as I used suggests to me
+#you are looking at my code too much while writing your code. This is allowed, but
+#not recommended!
+
 #3.3 ------------Pruned CART
 plotcp(m_f) 
 printcp(m_f) #after checking the graf, the value is 0.045, BEST CP
@@ -187,7 +201,13 @@ bagres <- bagging(num ~ .,
                   aggregation = "majority")
 
 predictions <- predict(bagres, newdata = d_val, type="class")
-misclass_error <- mean(predictions != d_val$num)
+misclass_error <- mean(predictions != d_val$num) #DAN: This line throws a warning which, if heeded, would have clued you on why the following line is wrong
+#DAN: For the the prediction method for a bagging model, the result of predict is a 
+#list and you have to take the $class slot.
+#DAN: cbind(predictions$class,d_val$num)
+#DAN: You can also see there is an off-by-one error because of conversion to factor
+#DAN: mean(as.integer(predictions$class)!=as.integer(d_val$num)-1)
+#DAN: You can see the (in-sample) error rate is actually 0
 print(misclass_error)#--> 0.9162996
 
 b_pred <- predict(bagres, newdata = d_val, type = "class", aggregation = "majority")
@@ -217,7 +237,7 @@ for (counter in 1:numgp)
 mean(xerrs_f)#--> 0.4442688
 mean(xerrs_d)#--> 0.4357708
 mean(xerrs_5)#--> 0.3693676 *best value
-mean(xerrs_b)#--> 1
+mean(xerrs_b)#--> 1 #DAN: Same bug as above, warnings can again clue you in to this if you pay attention to them
 
 
 #3.5 --------------Random forest model
