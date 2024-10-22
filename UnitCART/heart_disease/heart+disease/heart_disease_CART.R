@@ -463,3 +463,7 @@ png("tabla.png", width = 600, height = 400)  # Ajusta el tamaño según sea nece
 grid.draw(tabla_grafico)
 dev.off() 
 #End 
+###3
+###
+###
+###EGRGfg
