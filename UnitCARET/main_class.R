@@ -1,8 +1,10 @@
 #MULTIPLE METHODS ASSIGNMENT
 #Name: Anahi Quezada
 #DATA: Air quality
+#link : https://archive.ics.uci.edu/dataset/360/air+quality
 
-#This is the main code. 
+#This is the main code for classification. 
+
 #Setting my working directory: 
 setwd("C:/Users/asque/Documents/ML/QuezadaMLbiol/UnitCARET")
 data <- read.csv("AirQualityUCI1.csv")
@@ -11,23 +13,25 @@ graphics.off()
 library(caret)
 install.packages("RANN")
 library(RANN)
+
 #Data preparation 
 head(data)
 dim(data)
 data <- data[, 3:15] 
 is.na(data)
-#prepare data 
-#binary column 
+
+#To obtain the pollution column base on maximum level of concentration. 
 umbral_Nox.GT <- 53
 umbral_C6H6 <- 5
 umbral_CO <- 6
 data$contaminacion <- ifelse(data$CO.GT. > umbral_CO | 
                                data$C6H6.GT. > umbral_C6H6 | 
                                data$NOx.GT. > umbral_Nox.GT, 1, 0)
-set.seed(101)
 
+#To omit NAs
 data_clean <- na.omit(data)
-#my contaminacion column is numeric, I need to transform to factor 
+
+#my contamination column is numeric, I need to transform to factor 
 data_clean$contaminacion <- factor(data_clean$contaminacion, 
                                    levels = c(0, 1), 
                                    labels = c("L", "H"))
@@ -53,7 +57,8 @@ modelLookup("rpart")
 #Train Control
 traincontrol<-trainControl(method="repeatedcv",number=10,repeats=3)
 
-m_rpart<-train(x=x_train,y=y_train,
+m_rpart<-train(x=x_train,
+               y=y_train,
                method="rpart",
                trControl=traincontrol)
 class(m_rpart)
@@ -68,9 +73,13 @@ predic_model <- predict(m_rpart$finalModel, train)
 predic_model_1 <- apply(X=predic_model,MARGIN=1,
 FUN=function(x){ifelse(x[1]<.5,"M","B")})
 sum(prediction==predic_model_1)
-#tuneLength --> ask what is t?     
-m_rpart<-train(x=x_train,y=y_train,method="rpart",
-               trControl=traincontrol,tuneLength=15) 
+
+#tuneLength    
+m_rpart<-train(x=x_train,
+               y=y_train,
+               method="rpart",
+               trControl=traincontrol,
+               tuneLength=15) 
 m_rpart$results
 plot(m_rpart$results$cp, 1-m_rpart$results$Accuracy, 
      type="l")
@@ -271,7 +280,7 @@ pred_test <- predict(m_randomF,
               newdata= test)
 confusionMatrix(pred_test, test$contaminacion) 
 
-####---  Results 
+####---  Confusion Matrix 
 #Confusion Matrix and Statistics
 
 #Reference
