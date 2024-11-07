@@ -1,12 +1,22 @@
+#DAN: Overall, nice work. Some good examples of modularity here. The code runs without
+#too much hand-holding. I like your exploration of different ways to plot in color. 
+#Grade: S+
+
 #MODULARITY ASSIGNMENT
 #Name: Anahi Quezada
 #DATA: Precipitation and Temperature values from weather stations all over the USA
 #This is the main code. 
 #Setting my working directory: 
-setwd("C:/Users/asque/Documents/ML/QuezadaMLbiol/UnitModularity")
+
+#DAN: Nice header! Maybe add a sentence on the research objective. 
+
+#setwd("C:/Users/asque/Documents/ML/QuezadaMLbiol/UnitModularity")
+#DAN: Does not work on my machine! 
 
 #MODULARITY EXAMPLE --> defining the workflow of my code
 #Steps
+
+#DAN: Good idea to plan your workflow
 
 #1. Connect the new folder "UnitModularity" with my github online account. 
 #2. Listing the Packages that I'm going to use. (to read the data, do plots, 
@@ -27,8 +37,10 @@ setwd("C:/Users/asque/Documents/ML/QuezadaMLbiol/UnitModularity")
 #1. Connect to my github repositorie (check)
 #2. Packages to use
 install.packages("readRDS")
-install.packages("maps")
-library(readRDS)
+install.packages("maps") #DAN: I prefer not to install package in code because then when someone runs your code the 
+#packages are installed on their machine though they may not have actually wanted that. Best, in  opinion,
+#to indicate what they need and let them install. Avoids 
+library(readRDS) #DAN: base R has a readRDS function
 library(maps)
 library(dplyr)
 library(ggplot2)
@@ -36,7 +48,7 @@ library(viridis)
 library(gridExtra)
 
 #3. Checking my data
-#MODULARITY EXAMPLE -> define the variables instead of constants 
+#MODULARITY EXAMPLE -> define the variables instead of constants #DAN: OK, so do it!
 
 precip <- readRDS(file = "USAAnnualPcpn1950_2008.rds")
 temp <- readRDS(file="USAAnnualTemp1950_2008.rds")
@@ -76,7 +88,7 @@ anyNA(temp_clean) #--> FALSE
 #Precipitation
 
 values <- 40 #Here, I show the value of the data requirement that I need, In 
-            # this case, 40.  
+            # this case, 40.  #DAN: Good
 prec_40 <- pre_clean %>%
   group_by(state, name, lon, lat) %>%
   filter(n()>=values )%>%
@@ -87,11 +99,14 @@ temp_40 <- temp_clean %>%
   group_by(state, name, lon, lat) %>%
   filter(n()>=values )%>%
   ungroup()
+#DAN: This is the same code twice. It's quick code thanks to tidyverse, but still, it repeats.
+#So you missed an opportunity for modularity - could have written a function and called it twice. 
 
 #5. Slopes 
 #MODULARITY EXAMPLE ->  create the function to do the slopes and just call the 
 #name of the fucntion here. This function can work for both of my data sets(vars)
 source(file = "slopes_vars.R")
+#DAN: Good modularity
 
 #Precipitation
 slopes_p <- prec_40 %>%
