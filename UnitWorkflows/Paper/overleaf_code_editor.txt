@@ -1,0 +1,86 @@
+\documentclass{article}
+\usepackage{amsmath} % for formulas
+\usepackage{graphicx} % Required for inserting images
+\usepackage{cite} 
+\usepackage{authblk}
+\usepackage{geometry}
+\usepackage[a4paper, margin=1in]{geometry}
+\usepackage{float}
+
+\title{AirQuality Data set }
+\author{Anahi Quezada}
+\affil{University of Kansas}
+\date{November 2024}
+\begin{document}
+
+\maketitle
+
+\section{Data information}
+\texbf{Data: Air quality} 
+
+link : https://archive.ics.uci.edu/dataset/360/air+quality
+
+Contains the responses of a gas multi-sensor device deployed on the field in an Italian city. Hourly response averages are recorded along with gas
+concentrations references from a certified analyzer.
+
+\textbf{Additional Information}
+
+The dataset contains 9358 instances of hourly averaged responses from an array of 5 metal oxide chemical sensors embedded in an Air Quality Chemical Multisensor Device. The device was located on the field in a significantly polluted area, at road level,within an Italian city. Data were recorded from March 2004 to February 2005 (one year)representing the longest freely available recordings of on field deployed air quality chemical sensor devices responses. Ground Truth hourly averaged concentrations for CO, Non Metanic Hydrocarbons, Benzene, Total Nitrogen Oxides (NOx) and Nitrogen Dioxide (NO2) were provided by a co-located reference certified analyzer \cite{vito_air_2008}.
+
+\section{Data process}
+I cleaned the data to obtain a new dataset without NAs values using a source file
+\texttt{na\_delete.R} with the function \texttt{ na.omit.}
+ The raw dataset contained some columns that I will not use for these analyses. This way, I selected the following columns: \texttt{CO.GT., C6H6.GT., NOx.GT.,}  and Contamination column.
+All these process was made using R 4.0.5.
+After this execution, as part of the data visualization, I obtained (Figure 1) where I can show the frequencies of the pollutants in the air.
+\clearpage % Forces the figure to appear here, clearing any pending floats
+\begin{figure}[h]
+    \includegraphics[width=1\linewidth]{histograms.png}
+    \caption{Histogram of pollutants}
+    \label{fig:pollutants_histogram}
+\end{figure}
+
+The palette color of this graphic was made with the source colores.R which contains colorblind-friendly colors. 
+\vspace{1em}
+
+\textbf{Permissible threshold}
+\begin{align}
+    \texttt{data\$contaminacion <- ifelse(data\$CO.GT. > threshold\_CO |} \\
+    \texttt{\quad\quad\quad\quad data\$C6H6.GT. > threshold\_C6H6 |} \\
+    \texttt{\quad\quad\quad\quad data\$NOx.GT. > threshold\_Nox.GT, 1, 0)}
+    \label{eq:contaminacion}
+\end{align}
+ Equation~\ref{eq:contaminacion},  shows the process in which, according to Italian regulations (maximum permissible limit), the contamination column was created. This is the column that will be used for the following analyses.
+After this process, the data contains the contaminacion column which has values from 0 to 1. O represents the absence of pollution and 1 the presence of pollution. 
+The execution of this part of the code was made as indicated: 
+
+\begin{align}
+    \texttt{data\$contaminacion <- factor(data\$contaminacion,} \\
+    \texttt{levels = c(0, 1),} \\
+    \texttt{labels = c("L", "H"))} 
+    \label{eq:levels}
+\end{align}
+
+To visualize these primary results, figure 2, shows the presence of contamination. 
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.5\textwidth]{high_low.png}  % Set to 70% of the text width
+    \caption{Contamination levels}
+    \label{fig:contamination_levels}
+\end{figure}
+
+\section{Methods}
+\section{Results}
+\section{Discussion}
+\bibliographystyle{plain}  
+\bibliography{air}
+
+\end{document}
+
+
+
+
+
+
+
