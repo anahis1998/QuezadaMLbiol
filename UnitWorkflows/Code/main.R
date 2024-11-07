@@ -26,7 +26,7 @@ data <- data[, 3:15]
 is.na(data)
 
 #To omit NAs
-source(file = "na_delete.R")
+source(file = "Code/na_delete.R")
 
 data <- na_delete(data)
 dim(data)
@@ -41,7 +41,7 @@ data$contaminacion <- ifelse(data$CO.GT. > umbral_CO |
                                data$NOx.GT. > umbral_Nox.GT, 1, 0)
 sum(is.na(data$contaminacion))
 
-source(file = "colores.R")
+source(file = "Code/colores.R")
 palette <- colores("blind_fr")
 #Create the Results folder 
 
@@ -64,7 +64,7 @@ sum(is.na(data$contaminacion))
 library(ggplot2)
 
 # Create a bar plot with narrower bars and custom legend labels
-png("Results/high_low.png", width = 600, height = 600)
+png("Results/high_low.png", width = 300, height = 400)
 ggplot(data, aes(x = contaminacion, fill = contaminacion)) +
   geom_bar(width = 0.5) +  
   scale_fill_manual(
@@ -110,6 +110,6 @@ table <- as.matrix(m_C5p0$results)
 
 write.csv(m_C5p0$results, file = "Results/model_results.csv", row.names = FALSE)
 
-
+#End of code 
 
 
