@@ -3,8 +3,7 @@
 #Good, well organized code. Good comments. You might have considered using a loop instead of 
 #lots of repeats of similar code chunks.
 #Looks like there are some conflicts remaining in the other doc.
-#You need to use the data, code, results, paper format, but did not.
-#Overall, decent job on the elements you focused on, but lots missing.
+#Overall, decent job on the elements you focused on, but some missing.
 #Grade: S
 
 #MULTIPLE METHODS ASSIGNMENT
