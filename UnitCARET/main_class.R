@@ -1,3 +1,12 @@
+#DAN: In the writeup, you were supposed to read about a couple of the methods which were new to you and then
+#describe how they work and guidelines for using them - that appears to have been skipped.
+#Good, well organized code. Good comments. You might have considered using a loop instead of 
+#lots of repeats of similar code chunks.
+#Looks like there are some conflicts remaining in the other doc.
+#You need to use the data, code, results, paper format, but did not.
+#Overall, decent job on the elements you focused on, but lots missing.
+#Grade: S
+
 #MULTIPLE METHODS ASSIGNMENT
 #Name: Anahi Quezada
 #DATA: Air quality

@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+<<<<<<< HEAD #DAN: This shows there are conflicts remaining in this doc
 #MULTIPLE METHODS ASSIGNMENT
 #Name: Anahi Quezada
 #DATA: Air quality
