@@ -27,77 +27,74 @@ path <- ("Data")
          #           pattern = "/.(jpg|jpeg|png)$", full.names = TRUE)
 
 train<- file.path(path, "train")
-val<- file.path(path, "validation")
+val<- file.path(path, "evaluation")
 
-#training data
-daisy_t <- file.path(train, "daisy")
-dandelion_t <- file.path(train, "dandelion")
-roses_t <- file.path(train, "roses")
-sunflower_t <- file.path(train, "sunflowers")
-tulips_t <- file.path(train, "tulips")
-
-#evaluation data
-daisy_v <- file.path(val, "daisy")
-dandelion_v <- file.path(val, "dandelion")
-roses_v <- file.path(val, "roses")
-sunflower_v <- file.path(val, "sunflowers")
-tulips_v <- file.path(val, "tulips")
-
-list.files(dandelion_t)
-list.files(dandelion_v)
-
-train_datagen <- image_data_generator(
-  rescale = 1/255,
-  shear_range = 0.2,
-  zoom_range = 0.2,
-  horizontal_flip = TRUE
+# Data Augmentation for training data
+train_data<- image_data_generator(
+  rescale = 1/255,            # Normalize pixel values
+  shear_range = 0.2,          # Shear transformations
+  zoom_range = 0.2,           # Random zoom
+  horizontal_flip = TRUE      # Flip images horizontally
 )
-validation_datagen <- image_data_generator(rescale = 1/255)
+#rescaling size
+validation_data <- image_data_generator(rescale = 1/255)
 
+# Prepare training 
 train_generator <- flow_images_from_directory(
-  "Data/train",
-  train_datagen,
+  train,
+  train_data,
+  target_size = c(150, 150),   # Resize images to 150x150
+  batch_size = 32,            # Number of images per batch
+  class_mode = "categorical"  # Multiclass classification
+)
+#prepare evaluation data
+validation_generator <- flow_images_from_directory(
+  val,
+  validation_data,
   target_size = c(150, 150),
   batch_size = 32,
   class_mode = "categorical"
 )
 
-validation_generator <- flow_images_from_directory(
-  "Data/validation",
-  validation_datagen,
-  target_size = c(150, 150),
-  batch_size = 32,
-  class_mode = "categorical"
+# Define the model: Use Transfer Learning with VGG16
+base_model <- application_vgg16(
+  weights = "imagenet",       # Pre-trained on ImageNet
+  include_top = FALSE,        # Exclude fully connected top layers
+  input_shape = c(150, 150, 3) # Input image dimensions
 )
-#creating the model
-base_model <- application_vgg16(weights = "imagenet", include_top = FALSE, 
-                                input_shape = c(150, 150, 3))
 
 model <- keras_model_sequential() %>%
   base_model %>%
-  layer_global_average_pooling_2d() %>%
-  layer_dense(units = 256, activation = 'relu') %>%
-  layer_dropout(rate = 0.5) %>%
+  layer_global_average_pooling_2d() %>% # Reduce dimensions
+  layer_dense(units = 256, activation = 'relu') %>% # Add dense layer
+  layer_dropout(rate = 0.5) %>%          # Regularization
   layer_dense(units = length(train_generator$class_indices), 
-              activation = 'softmax')
+              activation = 'softmax')  # Output layer for classes
 
+# Compile the model
 model %>% compile(
   optimizer = optimizer_adam(),
   loss = 'categorical_crossentropy',
   metrics = c('accuracy')
 )
-#trainnig the model
+
+# Train the model
 history <- model %>% fit(
   train_generator,
   steps_per_epoch = train_generator$samples %/% 32,
-  epochs = 10,
+  epochs = 10, # Adjust epochs as needed
   validation_data = validation_generator,
   validation_steps = validation_generator$samples %/% 32
 )
-#save image 
+
+# Save and plot the training history
+png("Results/VGG16_plot1.png", width = 800, height = 600)
 plot(history)
-png("Results/training_history_plot1.png", width = 800, height = 600)
-plot(history)  
 dev.off()
 
-model %>% evaluate(validation_generator)
+# Evaluate on validation set
+results <- model %>% evaluate(validation_generator)
+print(results)
+
+
+
