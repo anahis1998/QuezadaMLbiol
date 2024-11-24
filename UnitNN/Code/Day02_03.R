@@ -125,7 +125,7 @@ print(results_df)
 write.csv(results_df, "Results/model_comparison_results.csv", row.names = FALSE)
 
 # Save plots for each model
-png("Results/vgg16.png", width = 800, height = 600)
+png("Results/vgg16_plot2.png", width = 800, height = 600)
 plot(results_vgg16$history)
 dev.off()
 
