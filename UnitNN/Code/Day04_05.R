@@ -99,7 +99,9 @@ evaluation <- model %>% evaluate(val_generator)
 
 # Print results
 cat("Validation Accuracy: ", evaluation[["accuracy"]], "\n")
+#Validation Accuracy:  0.2203636 
 cat("Validation Loss: ", evaluation[["loss"]], "\n")
+#Validation Loss:  1.616201 
 
 # Plot training history
 plot(history)
