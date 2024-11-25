@@ -11,6 +11,8 @@
 #including the results of plotting your history.
 
 #Dataset : Flowers's pictures
+#Link
+
 library(readxl)
 library(keras)
 library(tensorflow)
@@ -23,21 +25,23 @@ library(png)
 
 setwd("C:/Users/asque/Documents/ML/QuezadaMLbiol/UnitNN/")
 path <- ("Data")
-#fotos <- list.files(path="/Data/train",
-         #           pattern = "/.(jpg|jpeg|png)$", full.names = TRUE)
+#Manually, I splitted the data of each folder, to create the train folder 
+#and the validation folder (with enough equal sample for each class)
 
 train<- file.path(path, "train")
 val<- file.path(path, "evaluation")
 
-# Data Augmentation for training data
+# Pre processing the data 
+#Using image_data_generator from keras::image_data_generator to normalize my data
 train_data<- image_data_generator(
   rescale = 1/255,            # Normalize pixel values
-  shear_range = 0.2,          # Shear transformations
-  zoom_range = 0.2,           # Random zoom
-  horizontal_flip = TRUE      # Flip images horizontally
+  shear_range = 0.2,          # random shear transformation
+  zoom_range = 0.2,           # in or out by 20%
+  horizontal_flip = TRUE     
 )
 #rescaling size
-validation_data <- image_data_generator(rescale = 1/255)
+validation_data <- image_data_generator(rescale = 1/255) #255 its the maximum 
+#pixel value in 8 bit for RGB images 
 
 # Prepare training 
 train_generator <- flow_images_from_directory(
@@ -45,7 +49,7 @@ train_generator <- flow_images_from_directory(
   train_data,
   target_size = c(150, 150),   # Resize images to 150x150
   batch_size = 32,            # Number of images per batch
-  class_mode = "categorical"  # Multiclass classification
+  class_mode = "categorical"  # 5 flower classes
 )
 #prepare evaluation data
 validation_generator <- flow_images_from_directory(
@@ -56,16 +60,17 @@ validation_generator <- flow_images_from_directory(
   class_mode = "categorical"
 )
 
-# Define the model: Use Transfer Learning with VGG16
+# Model 1. Visual Geometry Group (VGG) 16 -> 16 layers
 base_model <- application_vgg16(
   weights = "imagenet",       # Pre-trained on ImageNet
   include_top = FALSE,        # Exclude fully connected top layers
-  input_shape = c(150, 150, 3) # Input image dimensions
+  input_shape = c(150, 150, 3) # Input image dimensions (pixels wide, pixels tall,
+                               #3 color channels)
 )
 
 model <- keras_model_sequential() %>%
   base_model %>%
-  layer_global_average_pooling_2d() %>% # Reduce dimensions
+  layer_global_average_pooling_2d() %>% # Reduce dimensions 
   layer_dense(units = 256, activation = 'relu') %>% # Add dense layer
   layer_dropout(rate = 0.5) %>%          # Regularization
   layer_dense(units = length(train_generator$class_indices), 
