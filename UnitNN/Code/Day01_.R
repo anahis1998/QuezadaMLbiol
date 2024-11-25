@@ -1,6 +1,7 @@
 #Day 1: Fitting a first neural network
 #Name: Anahi Quezada
 #Date: 11/09/2024
+
 #Identify a simpler and a slightly more complex dataset for yourself, as indicated 
 #in class. For the simpler: orient yourself to the data and do whatever preparation 
 #is needed; invent and code an appropriate simple neural network model; fit the 
@@ -11,8 +12,14 @@
 #including the results of plotting your history.
 
 #Dataset : Flowers's pictures
-#Link
+#Link: https://www.kaggle.com/datasets/imsparsh/flowers-dataset
+#Organization of the code 
 
+#1. Libraries 
+#2. Pre processing 
+#3. NN Model 
+
+#1. ------Libraries 
 library(readxl)
 library(keras)
 library(tensorflow)
@@ -23,6 +30,7 @@ install.packages("png")
 library(jpeg)
 library(png)
 
+#2. ------Pre processing 
 setwd("C:/Users/asque/Documents/ML/QuezadaMLbiol/UnitNN/")
 path <- ("Data")
 #Manually, I splitted the data of each folder, to create the train folder 
@@ -60,6 +68,7 @@ validation_generator <- flow_images_from_directory(
   class_mode = "categorical"
 )
 
+#3. -------NN Model 
 # Model 1. Visual Geometry Group (VGG) 16 -> 16 layers
 base_model <- application_vgg16(
   weights = "imagenet",       # Pre-trained on ImageNet
