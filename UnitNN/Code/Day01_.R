@@ -23,10 +23,7 @@
 library(readxl)
 library(keras)
 library(tensorflow)
-install.packages("recolorize")
 library(recolorize)
-install.packages("jpeg")  
-install.packages("png")   
 library(jpeg)
 library(png)
 
@@ -109,6 +106,8 @@ dev.off()
 # Evaluate on validation set
 results <- model %>% evaluate(validation_generator)
 print(results)
+#Accuracy --> 0.2203636
+#Loss --> 1.6180818
 
 
 
