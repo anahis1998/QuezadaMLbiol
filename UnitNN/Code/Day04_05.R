@@ -265,3 +265,13 @@ cat("The predicted class for the image is:", predicted_class, "\n")
 #first path --> The predicted class for the image is: sunflowers 
 #second path--> The predicted class for the image is: tulips 
 #The predicted class for the image is: dandelion
+
+# Get a list of images in the folder
+image_folder <- "path_to_your_images_folder"
+image_files <- list.files(image_folder, full.names = TRUE)
+
+# Loop through the images and classify each one
+for (image_path in image_files) {
+  predicted_class <- predict_flower_class(image_path, model_vgg16, train_generator)
+  cat("The predicted class for", image_path, "is:", predicted_class, "\n")
+}
