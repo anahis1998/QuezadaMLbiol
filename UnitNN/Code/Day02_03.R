@@ -33,6 +33,8 @@ train_generator <- flow_images_from_directory(
   batch_size = 32,            # Number of images per batch
   class_mode = "categorical"  # Multiclass classification
 )
+#training data=2295 images belonging to 5 classes
+
 #prepare evaluation data
 validation_generator <- flow_images_from_directory(
   val,
@@ -48,6 +50,7 @@ base_model <- application_vgg16(
   include_top = FALSE,  # Exclude the top fully connected layers
   input_shape = c(150, 150, 3)
 )
+#evaluation data=1375 images belonging to 5 classes
 
 # Freeze the layers of the base model to retain pretrained weights
 freeze_weights(base_model)
@@ -60,10 +63,53 @@ x <- base_model$output %>%
   layer_dense(units = length(train_generator$class_indices),
               activation = 'softmax')
 
+# Define the build_and_train_model function
+build_and_train_model <- function(model_name, model, train_generator, 
+                                  validation_generator, epochs = 20,
+                                  learning_rate = 0.001) {
+  # Compile the model
+  model %>% compile(
+    loss = "categorical_crossentropy",
+    optimizer = optimizer_adam(learning_rate = learning_rate),
+    metrics = c("accuracy")
+  )
+  
+  # Train the model
+  history <- model %>% fit(
+    train_generator,
+    steps_per_epoch = train_generator$n %/% train_generator$batch_size,
+    epochs = epochs,
+    validation_data = validation_generator,
+    validation_steps = validation_generator$n %/% validation_generator$batch_size
+  )
+  
+  # Get final evaluation metrics
+  final_results <- model %>% evaluate(
+    validation_generator,
+    steps = validation_generator$n %/% validation_generator$batch_size
+  )
+  
+  # Return results and training history
+  list(
+    name = model_name,
+    results = final_results,
+    history = history
+  )
+}
+
+
 # Define the final model
 model_vgg16 <- keras_model(inputs = base_model$input, outputs = x)
+
 results_vgg16 <- build_and_train_model("vgg16", model_vgg16, train_generator, 
                                        validation_generator)
+
+results_df <- data.frame(
+  Model = ("VGG16"),
+  Loss = (results_vgg16$results[1]),
+  Accuracy = (results_vgg16$results[2])
+)
+print(results_df)
 
 # Model 2: Custom CNN
 model_custom <- keras_model_sequential() %>%
@@ -118,8 +164,8 @@ results_df <- data.frame(
 )
 
 print(results_df)
-#Mode VGG16 is the best model. According to the highest accuracy (0.7709091) and
-#the lowest loss function (0.6193798). 
+#Mode VGG16 is the best model. According to the highest accuracy (0.7775298) and
+#the lowest loss function (0.6091945). 
 
 # Save model performance as a CSV
 write.csv(results_df, "Results/model_comparison_results.csv", row.names = FALSE)
