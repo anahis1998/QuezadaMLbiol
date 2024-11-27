@@ -178,16 +178,22 @@ results_resnet50 <- build_and_train_model("resnet50", model_resnet50,
 
 # Compare and save results
 results_df <- data.frame(
-  Model = c("VGG16", "Custom CNN", "ResNet50"),
-  Loss = c(results_vgg16$results[1], results_custom$results[1],
+  Model = c(#"VGG16", 
+    "Custom CNN", "ResNet50"),
+  Loss = c(#results_vgg16$results[1], 
+    results_custom$results[1],
            results_resnet50$results[1]),
-  Accuracy = c(results_vgg16$results[2], results_custom$results[2],
+  Accuracy = c(#results_vgg16$results[2], 
+    results_custom$results[2],
                results_resnet50$results[2])
 )
 
 print(results_df)
 #Mode VGG16 is the best model. According to the highest accuracy (0.7775298) and
 #the lowest loss function (0.6091945). 
+#    Model      Loss  Accuracy
+# Custom CNN 0.9601964 0.7150298
+#   ResNet50 1.4209356 0.3683036
 
 # Save model performance as a CSV
 write.csv(results_df, "Results/model_comparison_results.csv", row.names = FALSE)
