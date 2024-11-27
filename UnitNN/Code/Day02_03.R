@@ -3,14 +3,31 @@
 #Here. I'm calling the previous step from Code Day01_.R
 #Dataset : Flowers's pictures
 
+#Sructure 
+#1. Libraries
+#2. Setting working directory 
+#3. Preparing the data
+#4. Building the model 
+#5. Building the Models 
+# 5.1 Model 1: VGG_16
+# 5.2 Model 2: Custom CNN
+# 5.3 Model 3: Pre-trained ResNet50
+#6. Comparing results 
+#7. Create final plots 
+
+#1. Libraries
 library(keras)
 library(tensorflow)
 library(recolorize)
 library(jpeg)
 library(png)
 
+#2. Setting working directory 
+
 setwd("C:/Users/asque/Documents/ML/QuezadaMLbiol/UnitNN/")
 path <- ("Data")
+
+#3. Preparing the data
 
 train<- file.path(path, "train")
 val<- file.path(path, "evaluation")
@@ -55,6 +72,8 @@ base_model <- application_vgg16(
 # Freeze the layers of the base model to retain pretrained weights
 freeze_weights(base_model)
 
+#4. Building the model 
+
 # Build the custom model using the functional API
 x <- base_model$output %>%
   layer_global_average_pooling_2d() %>%
@@ -97,8 +116,9 @@ build_and_train_model <- function(model_name, model, train_generator,
   )
 }
 
+#5. Building the Models 
 
-# Define the final model
+# 5.1 Model 1: VGG_16
 model_vgg16 <- keras_model(inputs = base_model$input, outputs = x)
 
 results_vgg16 <- build_and_train_model("vgg16", model_vgg16, train_generator, 
@@ -111,7 +131,7 @@ results_df <- data.frame(
 )
 print(results_df)
 
-# Model 2: Custom CNN
+# 5.2 Model 2: Custom CNN
 model_custom <- keras_model_sequential() %>%
   layer_conv_2d(filters = 32, kernel_size = c(3, 3), activation = 'relu', 
                 input_shape = c(150, 150, 3)) %>%
@@ -129,7 +149,7 @@ model_custom <- keras_model_sequential() %>%
 results_custom <- build_and_train_model("custom_cnn", model_custom, 
                                         train_generator, validation_generator)
 
-# Model 3: Pre-trained ResNet50
+# 5.3 Model 3: Pre-trained ResNet50
 # Load the ResNet50 model as a base (feature extractor)
 base_model_resnet50 <- application_resnet50(
   weights = "imagenet",
@@ -154,6 +174,8 @@ model_resnet50 <- keras_model(inputs = base_model_resnet50$input,
 
 results_resnet50 <- build_and_train_model("resnet50", model_resnet50, 
                                         train_generator, validation_generator)
+#6. Comparing results 
+
 # Compare and save results
 results_df <- data.frame(
   Model = c("VGG16", "Custom CNN", "ResNet50"),
@@ -170,6 +192,7 @@ print(results_df)
 # Save model performance as a CSV
 write.csv(results_df, "Results/model_comparison_results.csv", row.names = FALSE)
 
+#7. Create final plots 
 # Save plots for each model
 png("Results/vgg16_plot2.png", width = 800, height = 600)
 plot(results_vgg16$history)
@@ -182,3 +205,4 @@ dev.off()
 png("Results/resnet50.png", width = 800, height = 600)
 plot(results_resnet50$history)
 dev.off()
+#End of code 
