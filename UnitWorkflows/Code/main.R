@@ -1,3 +1,10 @@
+#Overall pretty good, but you have too much code in main.R (typically that should
+#just source each of your main analyses). Grade: S 
+
+#DAN: You need a readme.md
+#This code ran pretty easily, so that's good! 
+#Too bad you had to go to overleaf, but I understand why.
+
 ##Workflows assignment 
 #Name: Anahi Quezada
 #Date: 11/03/2024
@@ -14,7 +21,9 @@ data <- read.csv("Data/AirQualityUCI1.csv")
 
 #Libraries 
 library(caret)
-install.packages("RANN")
+install.packages("RANN") #DAN: PLEASE don't use this. Make people install their own packages so they can
+#decide if they have the disk space and want to do that. Auto-installing a package on someone's machine
+#could be considered invasive, especially if they don't have the space. 
 library(RANN)
 library(dplyr)
 library(ggplot2)
