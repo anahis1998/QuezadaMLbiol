@@ -1,0 +1,132 @@
+\documentclass{article}
+\usepackage{amsmath} % for formulas
+\usepackage{graphicx} % Required for inserting images
+\usepackage{cite} 
+\usepackage{authblk}
+\usepackage{geometry}
+\usepackage[a4paper, margin=0,5in]{geometry}
+\documentclass{article}
+\usepackage{graphicx}
+\usepackage{float}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage{listings}
+
+\title{Neural Networks models: VGG 16 Application to Flowers dataset }
+\author{Anahi Quezada}
+\affil{University of Kansas}
+\date{November 2024}
+
+\maketitle
+\begin{document}
+
+\section{Introduction}
+Machine learning (ML) is defined as the field of study that gives computers the ability to learn without being explicitly programmed to handle the data more efficiently, according to Arthur Samuel. This way ML can interpret and extract information from the data. In this project, I am going to use ML Neural Network, a Supervised Neural Network to create a model capable of predict at which classification the input corresponds.  
+\section{Data information}
+
+\texbf{Data: Flowers dataset} 
+
+link : https://www.kaggle.com/datasets/imsparsh/flowers-dataset
+
+The dataset contains raw JPEG images of five types of flowers. The classification of this data is: daisy, dandelion, rose, sunflower, and, tulip.
+This dataset contains more than three thousand images with CC0 license: Public Domain. This data was manually split between Training and Evaluation data. The Evaluation data was created with the the requirement of less of the half of the Training data. 
+
+\section{Methods}
+I applied the libraries of TensorFlow and Keras. Inside these libraries, I selected three models: 
+
+Model 1: VGG 16. This is a convolutional neural network (CNN) model that's used for image classification that contains 16 layers, including 13 convolution layers and three fully connected layers. 
+
+Model 2: Custom CNN. This is repeated 6 times, followed by a global average pooling layer and a dense plus softmax layer for 4 output neurons. 
+
+Model 3: Pre-trained ResNet50. This is a convolutional neural network (CNN) that is 50 layers deep. 
+The last two models were fitted as a alterantive to the first Neural Network. 
+\newpage
+\textbf{Working flow}. 
+
+\textbf{1. Libraries}
+
+Above keras and Tensorflow, I also used "recolorize", "jpeg", "png", "EBImage", "imager", "gridExtra", "ggplot2". Some of them to visualize the pictures and others to develop the graphs and final plots. 
+
+\textbf{2. Set the working directory} 
+
+Here, I defined my working directory where I have the pictures in each folder according to the already know classification. Such as: daisy, dandelion, rose, sunflower and, tulip. 
+
+\textbf{3. Preparing the data}
+
+I manually split the data into Training and Evaluation data in this part. Both folder, contains the images inside each respective folder name. 
+All the code showing how I defined the arguments to this final model is in:
+
+https://github.com/anahis1998/QuezadaMLbiol/tree/main/UnitNN. 
+After checking the results of the VGG16, Custom CNN and, ResNet50. 
+The preliminary results about loss function and val accuracy are the following: 
+
+\textbf{Model Performance Metrics}
+
+\begin{tabular}{lcc} % Define three columns: l (left), c (center), c (center)
+\toprule
+\textbf{Model} & \textbf{Loss} & \textbf{Accuracy} \\ % Header row
+\midrule
+VGG16         & 0.6180474     & 0.7760417         \\
+Custom CNN    & 0.9601964     & 0.7150298         \\
+ResNet50      & 1.4209356     & 0.3683036         \\
+\bottomrule
+\end{tabular}
+\vspace{1cm} %
+
+Even though the model VGG16 have a better performance compared to the other two models, I tried to pullish the remaining models with more arguments in their functions, in a way to optimize the models and the CNN. Nevertheless, the graph viewer window was showing extremely discrepancy between the data and the prediction. That being said and based on this results, I focused on VGG16 model as a clear \textbf{Transfer learning example} since it has the highest accuracy and the lowest loss function. \\
+
+\textbf{4. Model VGG16}
+
+Is one of the most common deep learning architectures. This architecture includes 41 layers disturbed such as: 16 weight layers and 13 convolutional layers. In this case, the VGG16 model is trained using real raw pictures of the 5 flowers classification \cite{albashish_deep_2021}. This model has a constrained requirement and it is related to the training data set size. There is a high probability that if the size is small, the performance can be interpreted as a tendency to over fit \cite{kaur_automated_2019}.
+
+The algorithm that I followed to process the followers dataset is explained in the next paragraph: 
+Input: A set of 5 folders contained 5 different classes of flowers. Then part of the preparing the dataset, was manually split this data into training and evaluation folders. Then create the data augmentation fot the training data and rescaling the size of each picture to have an homogenized data. This factor was (1/255). Read all the images from directory for the train and val data. Create the base-model with the applciation of VGG16.\\
+
+After this and based on the knowledged adquiered in the previous code, I decided to freeze some layers. Then, I create a function to compile the model so I can trained the model with both datasets (trai and eval). Use keras-model to define the final model and obtain results, specifically loss function and accuracy. \\
+\begin{lstlisting}[caption={Code for defining the VGG16 model.}, label={lst:vgg16_code}]
+model_vgg16 <- keras_model(inputs = base_model$input, outputs = x)
+results_vgg16 <- build_and_train_model("vgg16", model_vgg16, train_generator, 
+                                        validation_generator)
+\end{lstlisting}
+I checked the results of the final model and the previous version of the same model. Both results are presented in the next table. \\
+
+\textbf{Model Performance Metrics of VGG16}
+
+\begin{tabular}{lcc} % Define three columns: l (left), c (center), c (center)
+\toprule
+\textbf{Model} & \textbf{Loss} & \textbf{Accuracy} \\ % Header row
+\midrule
+previous VGG16         & 0.6180474     & 0.7760417         \\
+final VGG16            & 0.5923406     & 0.77901798         \\
+       \\
+\bottomrule
+\end{tabular}\\
+
+This model showed a good enough confidence in the algorithm, then using a loop to read a folder with a mix of raw pictures without classification folders inside, I tested the model and see the output. 
+The mix folder contains forty nine pictures between daisies, sunflowers, roses, tulips and, dandelions. The model works mostly successfully with the pictures, even though there are mistakes in the output. 
+In the following figure, there is a comparison between the two versions of VGG16, Custom CNN and, ResNet50. 
+\clearpage % Forces the figure to appear here, clearing any pending floats
+\begin{figure}[H]
+    \includegraphics[width=1\linewidth]{comparing_plots.png}
+    \centering
+    \caption{Comparison of model's performances}
+    \label{fig:VGG16, Custom CNN and, ResNet50 performance}
+\end{figure}
+
+
+\textbf{5. Summary of results}
+
+After the creation of the loop (49 pictures), the next figure shows the results of the model's test. The total number of mistakes was twelve, and this reflects that the model can predict in average around the 75% of accuracy. 
+\clearpage % Forces the figure to appear here, clearing any pending floats
+
+\begin{figure}[H]
+\centering
+    \includegraphics[width=1\linewidth]{results_plot.png}
+    \caption{Results of VGG16 model}
+    \label{fig:This plot was made with the mix folder data}
+\end{figure}
+
+\bibliographystyle{plain}  
+\bibliography{DeepCNN}
+\bibliography{Kaur2019}
+\end{document}
