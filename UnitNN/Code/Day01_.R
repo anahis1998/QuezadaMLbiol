@@ -33,6 +33,9 @@ path <- ("Data")
 #Manually, I splitted the data of each folder, to create the train folder 
 #and the validation folder (with enough equal sample for each class)
 
+#DAN: Easier to just read them all in from one folder and then split then 
+#with a couple lines of code after they are read in!
+
 train<- file.path(path, "train")
 val<- file.path(path, "evaluation")
 
@@ -73,6 +76,10 @@ base_model <- application_vgg16(
   input_shape = c(150, 150, 3) # Input image dimensions (pixels wide, pixels tall,
                                #3 color channels)
 )
+#DAN: Jumping straight to transfer learning in day 1!
+
+#DAN: It looks like you forgot to freeze the parameters of the base model! 
+#That can cause problems - it means you have a really big model to train! 
 
 model <- keras_model_sequential() %>%
   base_model %>%
@@ -97,6 +104,7 @@ history <- model %>% fit(
   validation_data = validation_generator,
   validation_steps = validation_generator$samples %/% 32
 )
+#DAN: I could not get this to run on my machine so could not test
 
 # Save and plot the training history
 png("Results/VGG16_plot1.png", width = 800, height = 600)

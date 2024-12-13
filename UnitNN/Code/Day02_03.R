@@ -72,6 +72,8 @@ base_model <- application_vgg16(
 # Freeze the layers of the base model to retain pretrained weights
 freeze_weights(base_model)
 
+#DAN: This time you froze params, unlike the other script. 
+
 #4. Building the model 
 
 # Build the custom model using the functional API

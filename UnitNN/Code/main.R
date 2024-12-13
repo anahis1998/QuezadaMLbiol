@@ -1,3 +1,10 @@
+#DAN:
+#1) You need a readme
+#2) This doc is titles "main" but it appears to be day 6? I don't see a main. R that actually sources the other scripts. 
+#3) The code is a bit sloppy in many places, with scripts containing content they are not labelled to contain, etc. 
+#4) Youve done the work, though, and gotten some decent results. Grade, S.
+
+
 #Main script for Neural Network assignment 
 #Name: Anahi Quezada
 #Date: 11/27/2024
